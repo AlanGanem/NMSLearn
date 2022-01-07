@@ -1,214 +1,163 @@
-# [`nbdev`](https://nbdev.fast.ai/) Data Science template
-> This template merges [cookiecutter](https://drivendata.github.io/cookiecutter-data-science/)'s data science project template with [nbdev](https://nbdev.fast.ai/) software development tool. some other features to the folde structures are also included, based on this developer's experience with data science projects.
+# NMSLearn
+> NMSLib objects avalible just like sklearn's nearest_neighbors API
 
 
-# README.md Template below:
+## Instalation
+
+just run:
+
+```pip install git+https://github.com/AlanGanem/NMSLearn ```
+
+or  clone and run setup.py
+
+Available only for python 3.8 or lower
+
+# Available Wrappers
+
+- [X] `NMSLibSklearnWrapper` - Base class for building classes for different metrics
+- [X] `FastJaccardNN` - Class to perform Jaccard dissimilarity based nearesst neighbors search
+- [X] `FastL2NN` - Class to perform L2(euclidean) distance based nearesst neighbors search
+- [X] `FastKLDivNN`  - Class to perform Kullback-Leibler divergence based nearesst neighbors search
+
+## Usage example
 
 ```python
-#import parts of your code in order to show examples
-import sys
-sys.path.append('..')
-
-from src.ds__load import Class
-from src.ds__preprocess import func
+#import L2 nearest neighbor class
+from nmslearn.neighbors import FastL2NN
+#numpy for data generation
+import numpy as np
 ```
 
 ```python
-# You can include code snipets on your index (README.md) simply like thiis:
-cls_func = Class(func)
-cls_func.apply(1,5)
+#make random data to create index
+X = np.random.randn(100_000, 10)
+#instantiate nearest neighbor object with default parameters
+l2nn = FastL2NN(verbose = True)
+#fit the index
+l2nn.fit(X)
 ```
 
 
 
 
-    6
+    FastL2NN(verbose=True)
 
 
 
 ```python
-# another example
-from functools import reduce
-prod_function = lambda x: reduce(lambda x1,x2 : x1*x2, x)
-cls_prod = Class(prod_function)
-cls_prod.apply([1,2,3,4])
+#use fitted index to query new data
+query_matrix = np.random.randn(3, 10)
+
+distances, indexes = l2nn.kneighbors(query_matrix, n_neighbors = 30, n_jobs = 8, return_distance = True)
+
+distances, indexes
+```
+
+    kNN time total=0.008003 (sec), per query=0.002668 (sec), per query adjusted for thread number=0.021342 (sec)
+    
+
+
+
+
+    ([array([1.3245634, 1.6304972, 2.3469138, 2.5226061, 2.571098 , 2.5826378,
+             2.58591  , 2.7503452, 2.9602616, 3.051869 , 3.0761793, 3.0987031,
+             3.1178   , 3.126969 , 3.1348734, 3.2131133, 3.2408729, 3.2818627,
+             3.3321965, 3.339151 , 3.3681705, 3.3815045, 3.3855784, 3.4641187,
+             3.5331888, 3.5802543, 3.6158307, 3.6223383, 3.666287 , 3.6673372],
+            dtype=float32),
+      array([0.61047035, 0.6418276 , 0.7520662 , 0.8606815 , 0.8694241 ,
+             0.89354324, 0.9396638 , 1.0212313 , 1.046349  , 1.0705577 ,
+             1.0905973 , 1.1210229 , 1.1351492 , 1.214601  , 1.2423488 ,
+             1.2616279 , 1.2741274 , 1.4380698 , 1.4898877 , 1.6442922 ,
+             1.6522729 , 1.6648743 , 1.6743813 , 1.6807532 , 1.6844735 ,
+             1.7031903 , 1.7120422 , 1.7446207 , 1.7527819 , 1.7674448 ],
+            dtype=float32),
+      array([3.6314204, 4.0911403, 4.2446575, 4.4768524, 4.939749 , 5.056326 ,
+             5.184124 , 5.2949767, 5.351741 , 5.3570704, 5.376051 , 5.4323053,
+             5.6032033, 5.6485624, 5.6798406, 5.7229824, 5.727806 , 5.7553544,
+             5.7996774, 5.918634 , 5.9476724, 5.958545 , 6.0005064, 6.0113473,
+             6.046746 , 6.0788283, 6.115496 , 6.121717 , 6.171587 , 6.177366 ],
+            dtype=float32)],
+     [array([42822, 30338, 65640, 33816, 31477, 24327, 62219, 71619, 47402,
+             64592, 22439, 66049, 98434, 26807, 96418, 41685, 57696, 15364,
+             49249, 39804, 69842, 52465, 13791, 11394, 56749, 83391, 14460,
+             19654, 79622, 22899]),
+      array([16760, 74076, 36773, 98339, 74754, 23677, 24736, 29043, 22602,
+             42063,  9178, 28964, 23573, 93285,  1598, 55341,  4508, 58892,
+             90815, 76816, 71175, 59025, 32525, 14222, 98113, 17727, 14136,
+             60727, 52566, 22507]),
+      array([68364, 33045,   675, 94592, 92453, 63129,  8206, 41737, 90293,
+             33514, 42227, 97250, 84322, 35358, 11519, 25277, 33946, 74534,
+             60613, 50247, 16112, 66530, 42217, 43870, 35752, 72825, 16468,
+             83012, 86004, 83829])])
+
+
+
+```python
+import joblib
+#serialize object with joblib or any other serializer
+joblib.dump(l2nn,'l2nn.sav')
+
+#deserialze
+l2nn = joblib.load('l2nn.sav')
+```
+
+```python
+#appends to index with partial_fit method
+l2nn.partial_fit(X)
 ```
 
 
 
 
-    24
+    FastL2NN(verbose=True)
+
+
+
+```python
+#query again with 
+
+distances, indexes = l2nn.kneighbors(query_matrix, n_neighbors = 30, n_jobs = 8, return_distance = True)
+
+distances, indexes
+```
+
+    kNN time total=0.027713 (sec), per query=0.009238 (sec), per query adjusted for thread number=0.073902 (sec)
+    
+
+
+
+
+    ([array([1.3245634, 1.3245634, 1.6304972, 1.6304972, 2.3469138, 2.3469138,
+             2.5226061, 2.5226061, 2.571098 , 2.571098 , 2.5826378, 2.5826378,
+             2.58591  , 2.58591  , 2.7503452, 2.7503452, 2.9602616, 2.9602616,
+             3.051869 , 3.051869 , 3.0761793, 3.0761793, 3.0987031, 3.0987031,
+             3.1178   , 3.1178   , 3.126969 , 3.126969 , 3.1348734, 3.1348734],
+            dtype=float32),
+      array([0.61047035, 0.61047035, 0.6418276 , 0.6418276 , 0.7520662 ,
+             0.7520662 , 0.8606815 , 0.8606815 , 0.8694241 , 0.8694241 ,
+             0.89354324, 0.89354324, 0.9396638 , 0.9396638 , 1.0212313 ,
+             1.0212313 , 1.046349  , 1.046349  , 1.0705577 , 1.0705577 ,
+             1.0905973 , 1.0905973 , 1.1210229 , 1.1210229 , 1.1351492 ,
+             1.1351492 , 1.214601  , 1.214601  , 1.2423488 , 1.2423488 ],
+            dtype=float32),
+      array([3.6314204, 3.6314204, 4.0911403, 4.0911403, 4.2446575, 4.2446575,
+             4.4768524, 4.4768524, 4.939749 , 4.939749 , 5.056326 , 5.056326 ,
+             5.184124 , 5.184124 , 5.2949767, 5.2949767, 5.351741 , 5.351741 ,
+             5.3570704, 5.3570704, 5.376051 , 5.376051 , 5.4323053, 5.4323053,
+             5.6032033, 5.6032033, 5.6485624, 5.6485624, 5.6798406, 5.6798406],
+            dtype=float32)],
+     [array([42822, 42822, 30338, 30338, 65640, 65640, 33816, 33816, 31477,
+             31477, 24327, 24327, 62219, 62219, 71619, 71619, 47402, 47402,
+             64592, 64592, 22439, 22439, 66049, 66049, 98434, 98434, 26807,
+             26807, 96418, 96418]),
+      array([16760, 16760, 74076, 74076, 36773, 36773, 98339, 98339, 74754,
+             74754, 23677, 23677, 24736, 24736, 29043, 29043, 22602, 22602,
+             42063, 42063,  9178,  9178, 28964, 28964, 23573, 23573, 93285,
+             93285,  1598,  1598]),
+      array([68364, 68364, 33045, 33045,   675,   675, 94592, 94592, 92453,
+             92453, 63129, 63129,  8206,  8206, 41737, 41737, 90293, 90293,
+             33514, 33514, 42227, 42227, 97250, 97250, 84322, 84322, 35358,
+             35358, 11519, 11519])])
 
 
-
-# < Analytics Projetct Name >
-
-> The goal of the project is to ...
-
-## Checklist
-
-Mark which tasks have been performed
-
-- [ ] **Summary:** you have included a description, usage, output, accuracy and metadata of your model.
-- [ ] **Pre-processing:** you have applied pre-processing to your data and this function is reproducible to new datasets.
-- [ ] **Feature selection:** you have performed feature selection while modeling.
-- [ ] **Modeling dataset creation:** you have well-defined and reproducible code to generate a modeling dataset that reproduces the behavior of the target dataset.This pipeline is also applicable to generate the deploy dataset.
-- [ ] **Model selection:** you have chosen a suitable model according to the project specification.
-- [ ] **Model validation:** you have validated your model according to the project specification.
-- [ ] **Model optimization:** you have defined functions to optimize hyper-parameters and they are reproducible.
-- [ ] **Peer-review:** your code and results have been verified by your colleagues and pre-approved by them.
-- [ ] **Acceptance:** this model report has been accepted by the Data Science Manager. State name and date.
-
----
-
-## Summary
-
-The model is designed to ... (state a simple sentence here to indicate what your model does)
-
-## Usage
-
-Describe step-by-step what should be done to run the algorithm, as in the example below:
-
-1.	Download the database from `<path_to_file>` and place it on an acessible folder in your machine
-2.	Clone this repository to your machine
-3.	Update the `path` variable in main, to the path chosen on step 1. 
-3.	Make sure Python 3.6 is installed on your machine
-4.	Install all libraries on `requirements.txt` using the command:
-
-`pip install -r requirements.txt`
-
-5.	Run the command `python src/main.py` 
-6.	Check the results on the `output` directory
-
----
-
-## Output
-
-Clarify what are the files generated as output, with their names, paths and a brief description of the data structure (in case it is a CSV for example)
-
-Example:
-
-The model outputs a list called `<name>.csv` onto `<name>` and contains the following variables:
-
-- var1
-- var2
-- var3
-- var4
-- var5
-- var6
-
-In the future, the Score variable (from the Credit risk algorithm) shall also be automatically merged onto the output file.
-
----
-
-## [Metadata](docs/project_metadata.json)
-
-Here you should go the project metadata dictionary (written in JSON), as the file describes
-
----
-
-## Performance Metrics
-
-The project will be followed by a dashboard, available as a source code on this repo.
-The model is considered to be drifting when there are no visible distinction between clusters and/or when the KPI's are below the goal settled for the year.
-
----
-
-## Pre-processing
-
-Here should be stated in a step-by-step way what was done in the pre-processing stage of the project.
-
-Example:
-
-1.	Excluded readings with `<categories>` from `<rows>`: bad lines.
-2.	Limited `<name>` to 4, which represents Bank payroll.
-3.	Excludes `<name>` readings with more than 30 days in advance, in case they represent more 1%. 
-4.	Stacked all invoices by customer with the mean of each variable (although in some cases other aggregation functions are used instead).
-
----
-
-## Feature selection
-
-Here should be explained how the features used for the model were selected, if any feature selection methodology was implemented and so on.
-
-Example:
-
-The feature selection methodology used was the Forward Selection. Also, some variables used on the Credit risk model were also considered, up until when the model reached its optimal performance. PCA and RFE did not present better results so far.
-
-**Features used**
-
-Here should be placed the features used to run the model entirely.
-
-Example:
-
-The features used to train both the clustering and classifier can be found under `models/config`, with the static variable `COLS_TO_TRAIN`.
-
----
-
-## Modeling
-
-Here goes a better explanation on what algorithm was chosen and how does the complete model work.
-
-Example:
-
-To identify the clusters, the K-Means algorithm was chosen. A Random Forest Classifier from scikit-learn was then trained to predict the clusters for new customers and also customers with updated variable values. This pipeline has shown a good performance, running under 5 minutes and with satisfactory results.
-
----
-
-## Model selection
-
-Here should be stated a clarification on how it was decided to choose the running algorithm, and why not other ones. If any future implementations are envisioned, a brief statement should be made as well.
-
-Example:
-
-Although K-Medians normally performs better with outliers, K-Means still has shown more consistent results and therefore was decided to be used. K-Modes and K-Prototypes were also tested, for including categorical variables, but also had not either reached a good Silhouette Score or divided the data in a meaningful way. Spectral Clustering presented good results for a sample dataset, but has shown poor performance for the complete dataset, and still has to be studied for the next version. DBSCAN was considered, but since it neglects the outliers, it was then decided to be discarded. 
-
-For the classification algorithm, Random Forest outperformed the Decision Tree and the XGBoost classifiers.
-
----
-
-## Model validation
-
-A step-by-step explanation on what was done to choose the running model. The metrics measured to select them are also desired to be placed in the steps.
-
-Example:
-
-1.	The cluster numbers were chosen based on the Silhouette Score of 0,85.
-2.	The dataset was sampled to ensure the clustering consistency.
-3.	The clustered data was used as input for the Random Forest Classifier
-4.	The data was split into train and test (80/20).
-5.	The classifier reached the Accuracy Score of 0,96.
-
----
-
-## Model optimization
-
-Here should be explained if any kind of optimization of the model was made.
-
-Example:
-
-The hyper-parameters `n_estimators` and `max_depth` were manually optimized for the classifier, although there is still room for improvement, through GridSearch, Genetic Algorithms, etc. 
-
----
-
-## Drifting and Retraining
-
-Here should be explained what are the necessary steps done in order to retrain the model, whenever some kind of drifting or underperformance is noticed.
-
-Example:
-
-Whenever drifting is noticed, lines 40, 41, 47, 56, 60 and 61 need to be uncommented on `main.py` before running the model. Once it is done, they need to be commented again. In future versions, this process is ought to be automated.
-
----
-
-## Foreseen improvements
-
-If any future improvements are identified during any of the steps, they should be pointed out in this section.
-
-Example:
-
-- New features to be engineered in the next versions can potentially enhance clustering or recommendations. For example, it is still to be tested whether there is a type of customer that only pays back on a specific time of the month or week, and therefore they won't show in the recommendations list when they don't pay. 
-
-- Treating the (many) outliers with some other measures, could potentially enhance predictions.
-
-- Automatically gather data and run the model is something to be worked on for future versions
