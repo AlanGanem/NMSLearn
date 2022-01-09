@@ -307,7 +307,7 @@ class FastKLDivNN(NMSLibSklearnWrapper):
     def __init__(
         self,
         n_neighbors = 30,
-        index_time_params = {'M': 30, 'indexThreadQty': 4, 'efConstruction': 100, 'post' : 0},
+        index_time_params = {'indexThreadQty': 4, 'efConstruction': 100},
         query_time_params = {'efSearch': 100},
         verbose = False,
     ):
@@ -634,7 +634,7 @@ class FastKLDivNN(NMSLibSklearnWrapper):
     def __init__(
         self,
         n_neighbors = 30,
-        index_time_params = {'M': 30, 'indexThreadQty': 4, 'efConstruction': 100, 'post' : 0},
+        index_time_params = {'indexThreadQty': 4, 'efConstruction': 100},
         query_time_params = {'efSearch': 100},
         verbose = False,
     ):
