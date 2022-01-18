@@ -275,6 +275,25 @@ class FastJaccardNN(NMSLibSklearnWrapper):
         )
         return
 
+    def kneighbors(self, X = None, n_neighbors = None, return_distance = True, query_time_params = None, n_jobs = 4):
+        '''
+        Finds kneighbors using jaccard dissimilarity
+
+        Returns
+        -------
+
+        indexes or (distances, indexes)
+        '''
+        result = super().kneighbors(self, X, n_neighbors, return_distance, query_time_params, n_jobs)
+        if return_distance:
+            dist, idxs = results
+            dist = 1 - dist # get cosine disimilarity
+            return dist, idxs
+        else:
+            idxs = result
+            return idxs
+
+
 class FastL2NN(NMSLibSklearnWrapper):
 
     def __init__(
@@ -601,6 +620,25 @@ class FastJaccardNN(NMSLibSklearnWrapper):
             verbose = verbose,
         )
         return
+
+    def kneighbors(self, X = None, n_neighbors = None, return_distance = True, query_time_params = None, n_jobs = 4):
+        '''
+        Finds kneighbors using jaccard dissimilarity
+
+        Returns
+        -------
+
+        indexes or (distances, indexes)
+        '''
+        result = super().kneighbors(self, X, n_neighbors, return_distance, query_time_params, n_jobs)
+        if return_distance:
+            dist, idxs = results
+            dist = 1 - dist # get cosine disimilarity
+            return dist, idxs
+        else:
+            idxs = result
+            return idxs
+
 
 class FastL2NN(NMSLibSklearnWrapper):
 
