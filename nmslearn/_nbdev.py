@@ -7,6 +7,7 @@ index = {"sparsify": "neighbors.ipynb",
          "vstack": "neighbors.ipynb",
          "stack": "neighbors.ipynb",
          "NMSLibSklearnWrapper": "neighbors.ipynb",
+         "FastCosineNN": "neighbors.ipynb",
          "FastJaccardNN": "neighbors.ipynb",
          "FastL2NN": "neighbors.ipynb",
          "FastKLDivNN": "neighbors.ipynb"}
